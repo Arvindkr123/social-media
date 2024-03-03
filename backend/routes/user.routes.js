@@ -4,7 +4,9 @@ import {
   registerController,
   userLoginController,
   userFollowsController,
-  userLogoutController
+  userLogoutController,
+  userUpdatePasswordController,
+  userUpdateProfileController
 } from "../controllers/user.controllers.js";
 const router = Router();
 
@@ -12,5 +14,11 @@ router.route("/register").post(registerController);
 router.route("/login").post(userLoginController);
 router.route("/follow/:id").get(isAuthenticated, userFollowsController);
 router.route("/logout").get(userLogoutController);
+router
+  .route("/updatePassword")
+  .post(isAuthenticated, userUpdatePasswordController);
+router
+  .route("/updateProfile")
+  .post(isAuthenticated, userUpdateProfileController);
 
 export default router;

@@ -107,3 +107,47 @@ export const userLogoutController = async (req, res, next) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const userUpdatePasswordController = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    // console.log(req.body)
+    const user = await userModel.findById(req.user._id).select("+password");
+    const isMatch = await user.matchPassword(oldPassword);
+    // console.log(isMatch);
+    if (!isMatch) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Incorrect old password" });
+    }
+    // change the password
+    user.password = newPassword;
+    await user.save();
+    res
+      .status(200)
+      .json({ success: true, message: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const userUpdateProfileController = async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.user._id);
+    const { name, email } = req.body;
+
+    // change the name and email
+    if (name) {
+      user.name = name;
+    }
+    if (email) {
+      user.email = email;
+    }
+    await user.save();
+    res
+      .status(200)
+      .json({ success: true, message: "update profile successfully!" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
