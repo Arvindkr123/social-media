@@ -1,3 +1,4 @@
+import { postModel } from "../models/post.models.js";
 import { userModel } from "./../models/user.models.js";
 
 export const registerController = async (req, res, next) => {
@@ -147,6 +148,33 @@ export const userUpdateProfileController = async (req, res, next) => {
     res
       .status(200)
       .json({ success: true, message: "update profile successfully!" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteMyProfileController = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id);
+    const posts = user.posts;
+    console.log(posts);
+
+    for (let i = 0; i < posts.length; i++) {
+      const post = await postModel.findById(posts[i]);
+      console.log(post);
+      await post.deleteOne();
+    }
+
+    await user.deleteOne();
+    res.cookie("token", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "User Profile deleted successfully",
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

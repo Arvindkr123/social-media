@@ -6,7 +6,8 @@ import {
   userFollowsController,
   userLogoutController,
   userUpdatePasswordController,
-  userUpdateProfileController
+  userUpdateProfileController,
+  deleteMyProfileController
 } from "../controllers/user.controllers.js";
 const router = Router();
 
@@ -20,5 +21,7 @@ router
 router
   .route("/updateProfile")
   .post(isAuthenticated, userUpdateProfileController);
+
+router.route("/delete/me").delete(isAuthenticated, deleteMyProfileController)
 
 export default router;
